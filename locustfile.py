@@ -1,16 +1,20 @@
 from locust import HttpLocust, TaskSet, task
+from locust import events
+
 
 class UserBehavior(TaskSet):
     def on_start(self):
         """ on_start is called when a Locust start before any task is scheduled """
-        self.login()
-
-    def login(self):
-        self.client.post("/api/v1/auth", {"appID":"APP_ID", "password":"123"})
+        print('Load test started')
 
     @task(1)
     def index(self):
-        self.client.get("/api/v1/language")
+        expected_content = b'{"original_message": "Hello I\'m a bit confused", "messages": ["[QnA bot] says:\\nCould you rephrase or clarify your question for better understanding?"], "length": "1"}'
+        with self.client.post("/ask_bot", {"message": "Hello I'm a bit confused"}) as response:
+            print(response.content)
+            print(response.status_code)
+            if response.content != expected_content:
+                print(str(response.content))
 
 
 class NLPAPIUser(HttpLocust):
