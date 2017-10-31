@@ -1,8 +1,10 @@
 from direct_line_API_v3_connector.connector import DirectLineAPI
 from config import config
+from config.config import *
 
-bot = DirectLineAPI(config.DIRECT_LINE_API_SECRET)
-bot.send_message("I have Outlook problem")
-botresponse = bot.get_message()
-for message in botresponse:
-    print(message)
+class BotTestSession(object):
+    def ask_bot_for(self, message):
+        bot = DirectLineAPI(DIRECT_LINE_API_SECRET)
+        bot.send_message(message)
+        botresponse = bot.get_message()
+        return botresponse
