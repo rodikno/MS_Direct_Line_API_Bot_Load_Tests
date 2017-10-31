@@ -5,6 +5,7 @@
 # Here we use start conversation as we'll be calling the bot immediately
 
 import requests
+from requests import Timeout, RequestException
 from time import sleep
 
 
@@ -55,8 +56,8 @@ class DirectLineAPI(object):
 
     def get_message(self):
         """
-        Get a response message back from the botframework using directline api
-        Asking in a loop with delay until bot responds with anything
+        Get a response message back from the botframework using Direct Line API v3.0
+        Asking in a loop with delay until bot responds with anything valuable
         """
         url = '/'.join([self._base_url, 'conversations', self._conversationid, 'activities'])
         watermark = 0
@@ -67,14 +68,13 @@ class DirectLineAPI(object):
             botresponse = requests.get(url, headers=self._headers,
                                        json={'conversationId': self._conversationid})
             jsonresponse = botresponse.json()
-            if botresponse.status_code != 200:
-                print(f'ERROR on GET_MESSAGE: API returned status code [{str(botresponse.status_code)}]')
-                break
+            if botresponse.status_code > 400:
+                raise RequestException(f'ERROR on GET_MESSAGE: API returned status code [{str(botresponse.status_code)}]')
             if jsonresponse['watermark'] != '0':
                 messages = []
                 for activity in jsonresponse['activities']:
                     messages.append("[QnA bot] says:\n" + activity['text'])
-                return messages[1:] #0 element is a clients own message so return starting from 1st elem
+                return messages[1:]  # 0 element is a clients own message so return starting from the 1st elem
             print('.')
             sleep(1)
-        print("TIMEOUT REACHED: Bot is not responding, please try again later")
+        raise Timeout("TIMEOUT REACHED: Bot is not responding, please try again later")
