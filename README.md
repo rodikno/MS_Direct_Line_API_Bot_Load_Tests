@@ -6,14 +6,16 @@ For further details refer to the API documentation here:
 )
 1. Register your bot on the dev.botframework.com portal
 2. Enable the DirectLine Channel and copy the secret key
-3. Add you key below and run
+3. Put the secret key to `/config/config.py` as `DIRECT_LINE_API_SECRET` value
+4. Run the `bot_connection.py`
 
 Usage example
 
 ```
-bot = DirectLineAPI('{your-direct-line-secret-here}')
-bot.send_message("Hi")
+bot = DirectLineAPI(config.DIRECT_LINE_API_SECRET)
+bot.send_message("I have Outlook problem")
 botresponse = bot.get_message()
-print botresponse
+for message in botresponse:
+    print(message)
 ```
 
