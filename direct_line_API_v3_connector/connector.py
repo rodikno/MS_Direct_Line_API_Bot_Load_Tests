@@ -76,5 +76,5 @@ class DirectLineAPI(object):
                     messages.append("[QnA bot] says:\n" + activity['text'])
                 return messages[1:]  # 0 element is a clients own message so return starting from the 1st elem
             print('.')
-            sleep(1)
+            sleep(0.8)
         raise Timeout("TIMEOUT REACHED: Bot is not responding, please try again later")
